@@ -1,0 +1,45 @@
+\definecolor{AUblue}{HTML}{002546}
+\definecolor{AUprog}{HTML}{C0C0C0}
+\setbeamertemplate{footline}[frame number]      
+\setbeamercolor{palette primary}{bg=AUblue,fg=white}
+
+\setbeamercolor{progress bar}{
+  fg=AUblue,
+  bg=AUprog
+}
+
+\setbeamercolor{title separator}{
+  use=progress bar,
+  parent=progress bar
+}
+\setbeamercolor{progress bar in head/foot}{%
+  use=progress bar,
+  parent=progress bar
+}
+\setbeamercolor{progress bar in section page}{
+  use=progress bar,
+  parent=progress bar
+}
+
+\setbeamercolor{alerted text} {
+  fg=AUblue
+}
+
+\setbeamertemplate{footline}{%
+  \hspace{.5cm}
+  \includegraphics[align=c, height=.5cm]{graphics/logos/aulogo_uk_var2_blue.eps}
+  \hspace{1cm}
+  \includegraphics[align=c, height=1cm]{graphics/logos/scale_iot.eps}%
+  \hfill%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \insertframenumber\,/\,\inserttotalframenumber\kern1em%
+}
+
+\setbeamertemplate{frametitle}{\nointerlineskip  
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.75ex,dp=1.375ex]{frametitle}
+    \hspace*{2ex}\insertframetitle \hfill  \includegraphics[align=c, height=.5cm]{graphics/logos/aulogo_uk_var2_white.eps} \hspace*{1ex}%
+  \end{beamercolorbox}}
+
+
+

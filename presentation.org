@@ -1,0 +1,231 @@
+#+TITLE: Data Storage - When reality clashes with theory
+#+AUTHOR: Lars Nielsen, /Postdoctoral Researcher/  
+
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil toc:nil title:nil date:nil
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [table,svgnames,aspectratio=169]
+#+latex_header: \input{preamble}
+
+\input{title_slide}
+
+* Agenda
+
+  - Why is this talk at all?
+  - Examples 
+    + Speed of writing
+    + EXT4 - Unlimited files, yes?
+    + Keep track of what is keeping track
+
+* 
+
+\section{Why is this talk at all?}
+
+    
+* Why is this talk at all?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+
+   - Theory is often less limited than the real world
+
+
+* Why is this talk at all?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+
+   - Theory is often less limited than the real world
+     - Limits no taken into account
+     - Unknown factors from hardware 
+
+* Why is this talk at all?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+
+   - Theory is often less limited than the real world
+     - Limits no taken into account
+     - Unknown factors from hardware
+   - No accounting for implementation correctness
+
+* Why is this talk at all?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+
+   - Theory is often less limited than the real world
+     - Limits no taken into account
+     - Unknown factors from hardware
+   - No accounting for implementation correctness
+     - Is the implementation correct?
+     - Is there a unknown factor messing up expected behaviour?
+
+* Why is this talk at all?       
+  
+#+BEGIN_CENTER
+#+latex: {\huge That sound annoying!}
+#+END_CENTER
+
+* Why is this talk at all?       
+  
+#+BEGIN_CENTER
+#+latex: {\huge That sound annoying!}
+#+END_CENTER
+
+#+BEGIN_CENTER
+#+latex: {\huge Well... That is because it is!}
+#+END_CENTER
+
+
+* Why is this talk at all?       
+
+  #+BEGIN_CENTER
+  Therefore this talk focuses on examples where theory and practices clashes and why it happens
+  #+END_CENTER
+
+
+* 
+
+\section{Examples}
+  
+* Speed of Writing
+
+- Let us say we have some data we split into N chunks
+- Number of chunks = |DATA| / chunk size
+- Chunk size can be any size
+  + let us assume 1kB, 2kB, 4kB, 8kB, ...
+
+What happens to throughput of chunks of data?
+
+
+* Speed of Writing
+
+- Let us say we have some data we split into N chunks
+- Number of chunks = |DATA| / chunk size
+- Chunk size can be any size
+  + let us assume 1kB, 2kB, 4kB, 8kB, ...
+
+What happens to throughput of chunks of data?
+
+It should be quicker to write 1kB to disk rather than 4 or 8, right?
+   
+
+* Speed of Writing
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:  
+
+  It should be quicker to write 1kB to disk rather than 4 or 8, right?
+
+  Well actually, no!
+
+* Speed of Writing
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:    
+
+  It should be quicker to write 1kB to disk rather than 4 or 8, right?
+
+  Well actually, no! \rightarrow Huh?
+
+* Speed of Writing
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:    
+
+  It should be quicker to write 1kB to disk rather than 4 or 8, right?
+
+  Well actually, no! \rightarrow Huh?
+
+  - Disk writes in certain blocks / pages
+  - These are, in general, 4 or 8kB
+  - writing to disk is slow
+    - i.e. more writes = slower speed
+
+
+* Speed of Writing
+
+
+Therefore:
+
+ Smaller chunk size \rightarrow larger number chunks \rightarrow larger number of writes \rightarrow lower throughput
+
+
+* Speed of Writing
+
+
+Therefore:
+
+ Smaller chunk size \rightarrow larger number chunks \rightarrow larger number of writes \rightarrow lower throughput
+
+Don't believe me?
+
+#+BEGIN_CENTER
+INSERT PLOT
+#+END_CENTER
+  
+  
+* EXT4 - Unlimited files, yes?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+   
+- EXT4 is supposed to support up to 4 Billion files
+- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
+
+* EXT4 - Unlimited files, yes?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+   
+- EXT4 is supposed to support up to 4 Billion files
+- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
+
+  Which it does
+
+* EXT4 - Unlimited files, yes?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+   
+- EXT4 is supposed to support up to 4 Billion files
+- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
+\\
+  Which it does  
+
+  However! Meet Directory Index\footnote{https://www.usenix.org/legacy/publications/library/proceedings/als01/full\_papers/phillips/phillips.pdf} originally released for EXT2
+
+* EXT4 - Unlimited files, yes?
+   :PROPERTIES:
+   :BEAMER_opt: t
+   :END:
+   
+- EXT4 is supposed to support up to 4 Billion files
+- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
+\\
+  Which it does  
+
+  However! Meet Directory Index\footnote{https://www.usenix.org/legacy/publications/library/proceedings/als01/full\_papers/phillips/phillips.pdf} originally released for EXT2
+
+- Keeps a index of all files in a directory (neat)
+- Comes with its own limit of files it can index
+- This limit is set by the Linux distribution on file system create
+  - Observed 16, 32, and 64 million 
+
+* EXT4 - Unlimited files, yes?
+How do we handle this?
+
+- Keeps a index of all files in a directory (neat)
+- Comes with its own limit of files it can index
+- This limit is set by the Linux distribution on file system create
+  - Observed 16, 32, and 64 million
+
+\\
+- We can disable the index
+  - Not a good idea if you do not have your own index
+  - But works in a pinch 
+- Or we find a hack a round
+  - \uparrow not easy
+  
