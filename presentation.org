@@ -10,6 +10,93 @@
 
 \input{title_slide}
 
+* 
+
+  #+BEGIN_CENTER
+#+latex: {\huge Researchers are often guilty of only celebratint the final success}
+  #+END_CENTER
+
+  #+BEGIN_CENTER
+#+latex: {\huge I want to present the carnage that can happen behind the scene}
+  #+END_CENTER  
+
+* The Research Goal
+
+  #+BEGIN_CENTER
+#+latex:  {\huge To create a file system based on a new emerging technology called generalised deduplication}
+  #+END_CENTER
+
+
+* The carnage
+
+  #+BEGIN_CENTER
+#+latex: {\huge We constantly ran out of disk space}
+  #+END_CENTER
+
+  #+BEGIN_CENTER
+#+latex: {\huge But all analytics tools told us that we had amble space left}
+  #+END_CENTER  
+
+  #+BEGIN_CENTER
+#+latex: {\huge So what was wrong?}
+  #+END_CENTER  
+
+
+* Research Vectors
+
+** Left                                                               :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+- Our code
+- Some thing out side our code
+
+** Right                                                              :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+
+* Research Vectors
+
+** Left                                                               :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+- Our code
+- Some thing out side our code 
+   
+
+** Right                                                              :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+- Our code
+  - Full code analysis revealed, exactly nothing
+  - Follow systems calls, revealed... well nothing
+
+* Research Vectors
+
+** Left                                                               :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+- Our code
+- Some thing out side our code 
+   
+
+** Right                                                              :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+- Something outside our code
+  - We used EXT4 as an external storage
+    - It has something called a directory index
+
+* EXT 4 Directory index 
+
+  - Describe what dir index
+    - maybe a little writing 
+  
 * Agenda
 
   - Why is this talk at all?
