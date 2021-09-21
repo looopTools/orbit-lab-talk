@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+  [elm/.style={draw, align=center, text width=.6cm}]
+  \node[elm] (h1) {0};
+  \foreach \i in {2,...,40}{
+    \pgfmathtruncatemacro{\y}{\i-1};
+    \node[elm, right of=h\y] (h\i) {\y}; 
+  }
+\end{tikzpicture}

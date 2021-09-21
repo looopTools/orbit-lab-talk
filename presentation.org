@@ -94,225 +94,150 @@
 
 * EXT 4 Directory index 
 
-  - Describe what dir index
-    - maybe a little writing 
-  
-* Agenda
+  - An index of all files in a folder
+  - It is (most often) loaded in to memory
+  - Used to speed up look up operations
+    - \texttt{ls}, \texttt{stat}, etc.
 
-  - Why is this talk at all?
-  - Examples 
-    + Speed of writing
-    + EXT4 - Unlimited files, yes?
-    + Keep track of what is keeping track
+* EXT 4 Directory index 
 
-* 
-
-\section{Why is this talk at all?}
-
-    
-* Why is this talk at all?
+** Left                                                               :BMCOL:
    :PROPERTIES:
-   :BEAMER_opt: t
+   :BEAMER_col: .5
+   :END:
+  - An index of all files in a folder
+  - It is (most often) loaded in to memory
+  - Used to speed up look up operations
+    - \texttt{ls}, \texttt{stat}, etc.
+
+** Right                                                              :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
    :END:
 
-   - Theory is often less limited than the real world
-
-
-* Why is this talk at all?
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:
-
-   - Theory is often less limited than the real world
-     - Limits no taken into account
-     - Unknown factors from hardware 
-
-* Why is this talk at all?
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:
-
-   - Theory is often less limited than the real world
-     - Limits no taken into account
-     - Unknown factors from hardware
-   - No accounting for implementation correctness
-
-* Why is this talk at all?
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:
-
-   - Theory is often less limited than the real world
-     - Limits no taken into account
-     - Unknown factors from hardware
-   - No accounting for implementation correctness
-     - Is the implementation correct?
-     - Is there a unknown factor messing up expected behaviour?
-
-* Why is this talk at all?       
-  
 #+BEGIN_CENTER
-#+latex: {\huge That sound annoying!}
+#+latex: {\large So what is the problem?}
 #+END_CENTER
 
-* Why is this talk at all?       
-  
+* EXT4 vs Directory Index
+
 #+BEGIN_CENTER
-#+latex: {\huge That sound annoying!}
+#+latex: {\huge EXT4 can in theory stored an "unlimited" amount of files}  
 #+END_CENTER
 
 #+BEGIN_CENTER
-#+latex: {\huge Well... That is because it is!}
+#+latex: {\huge Directory Index has a different limit}  
 #+END_CENTER
 
-
-* Why is this talk at all?       
-
-  #+BEGIN_CENTER
-  Therefore this talk focuses on examples where theory and practices clashes and why it happens
-  #+END_CENTER
-
-
-* 
-
-\section{Examples}
-  
-* Speed of Writing
-
-- Let us say we have some data we split into N chunks
-- Number of chunks = |DATA| / chunk size
-- Chunk size can be any size
-  + let us assume 1kB, 2kB, 4kB, 8kB, ...
-
-What happens to throughput of chunks of data?
-
-
-* Speed of Writing
-
-- Let us say we have some data we split into N chunks
-- Number of chunks = |DATA| / chunk size
-- Chunk size can be any size
-  + let us assume 1kB, 2kB, 4kB, 8kB, ...
-
-What happens to throughput of chunks of data?
-
-It should be quicker to write 1kB to disk rather than 4 or 8, right?
-   
-
-* Speed of Writing
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:  
-
-  It should be quicker to write 1kB to disk rather than 4 or 8, right?
-
-  Well actually, no!
-
-* Speed of Writing
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:    
-
-  It should be quicker to write 1kB to disk rather than 4 or 8, right?
-
-  Well actually, no! \rightarrow Huh?
-
-* Speed of Writing
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:    
-
-  It should be quicker to write 1kB to disk rather than 4 or 8, right?
-
-  Well actually, no! \rightarrow Huh?
-
-  - Disk writes in certain blocks / pages
-  - These are, in general, 4 or 8kB
-  - writing to disk is slow
-    - i.e. more writes = slower speed
-
-
-* Speed of Writing
-
-
-Therefore:
-
- Smaller chunk size \rightarrow larger number chunks \rightarrow larger number of writes \rightarrow lower throughput
-
-
-* Speed of Writing
-
-
-Therefore:
-
- Smaller chunk size \rightarrow larger number chunks \rightarrow larger number of writes \rightarrow lower throughput
-
-Don't believe me?
+* EXT4 vs Directory Index
 
 #+BEGIN_CENTER
-INSERT PLOT
+#+latex: {\huge EXT4 can in theory stored an "unlimited" amount of files}  
+#+END_CENTER
+
+#+BEGIN_CENTER
+#+latex: {\huge Directory Index has a different limit}  
+#+END_CENTER
+
+#+BEGIN_CENTER
+#+latex: {\huge Relax it gets worse the limit varies between Linux distributions and even version.} 
 #+END_CENTER
   
+
+* The problem
+
+  - Directory Index limits a system that should be limited
+  - The limit is not well defined
+
+    |---------------------+----------------|
+    | OS                  | Observed limit |
+    |---------------------+----------------|
+    |---------------------+----------------|
+    | Ubuntu 18.04        | 12mio          |
+    | Ubuntu 18.04 server | 16mio          |
+    | Fedora 31           | 32mio          |
+    | Fedora 31 Server    | 32mio          |
+    | Ubuntu 20.04        | 20mio          |
+    | Fedora 33           | 64mio          |
+
+* Solutions
+
+  - Disable the directory index 
+    - That is an option
+    - It solves the issue
+    - But it heavily damage performance
+
+* Solutions
+
+** Left                                                               :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+
+  - Disable the directory index 
+    - That is an option
+    - It solves the issue
+    - But it heavily damage performance
+
+** Right                                                              :BMCOL:
+   :PROPERTIES:
+   :BEAMER_col: .5
+   :END:
+
+   - So let us hack away around
+   - We will turn the disadvantage of directory index into an advantage
+   - It is only a "solution"
+
+* Hackaround
+
+  - Our file all have a SHA-1 identifier
+    - 20 bytes or converted to hexadecimal string 40 bytes
+
+  Let us use that to create a grouping system 
+
+* Hackaround
+
+  - Our file all have a SHA-1 identifier
+    - 20 bytes or converted to hexadecimal string 40 bytes
+
+#+latex: \resizebox{\linewidth}{!}{\input{graphics/hash}}
+      
+  Let us use that to create a grouping system 
+
+#+latex: \resizebox{\linewidth}{!}{\input{graphics/hash_group_1}}  
+
+If hash for files shares the 2 first characters they belong to the same /major group/
+
+#+latex: \resizebox{\linewidth}{!}{\input{graphics/hash_group_2}}
+
+and say files that shares the first 4 characters belongs to the same /minor group/
+
   
-* EXT4 - Unlimited files, yes?
+* Hackaround
+
+  #+latex: \resizebox{\linewidth}{!}{\input{graphics/hash_group_2}}
+
+** Left                                                               :BMCOL:
    :PROPERTIES:
-   :BEAMER_opt: t
+   :BEAMER_col: .5
    :END:
-   
-- EXT4 is supposed to support up to 4 Billion files
-- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
 
-* EXT4 - Unlimited files, yes?
+  - Then we create a folder for each major group
+  - In the major group we create folders for all minor groups
+  - Then we place all files belong to that specific minor group in folder
+
+** Right                                                              :BMCOL:
    :PROPERTIES:
-   :BEAMER_opt: t
+   :BEAMER_col: .5
    :END:
-   
-- EXT4 is supposed to support up to 4 Billion files
-- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
 
-  Which it does
+   - Make structure picture
 
-* EXT4 - Unlimited files, yes?
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:
-   
-- EXT4 is supposed to support up to 4 Billion files
-- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
-\\
-  Which it does  
+* Hackaround
 
-  However! Meet Directory Index\footnote{https://www.usenix.org/legacy/publications/library/proceedings/als01/full\_papers/phillips/phillips.pdf} originally released for EXT2
-
-* EXT4 - Unlimited files, yes?
-   :PROPERTIES:
-   :BEAMER_opt: t
-   :END:
-   
-- EXT4 is supposed to support up to 4 Billion files
-- EXT4 is supposed to support up to 4 Billion - 1 files for a single directory\footnote{-1 as the directory is file}
-\\
-  Which it does  
-
-  However! Meet Directory Index\footnote{https://www.usenix.org/legacy/publications/library/proceedings/als01/full\_papers/phillips/phillips.pdf} originally released for EXT2
-
-- Keeps a index of all files in a directory (neat)
-- Comes with its own limit of files it can index
-- This limit is set by the Linux distribution on file system create
-  - Observed 16, 32, and 64 million 
-
-* EXT4 - Unlimited files, yes?
-How do we handle this?
-
-- Keeps a index of all files in a directory (neat)
-- Comes with its own limit of files it can index
-- This limit is set by the Linux distribution on file system create
-  - Observed 16, 32, and 64 million
-
-\\
-- We can disable the index
-  - Not a good idea if you do not have your own index
-  - But works in a pinch 
-- Or we find a hack a round
-  - \uparrow not easy
-  
+  What this does is:
+  - Reduce the probability of hitting the directory index limit
+    - all though still present
+  - But we retain the power of the directory index
+  - With minimum damage to storage usage
+    4kB (minimum per folder) 
