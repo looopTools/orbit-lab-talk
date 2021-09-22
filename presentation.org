@@ -94,7 +94,7 @@
 
 * EXT 4 Directory index 
 
-  - An index of all files in a folder
+  - An index\footnote{A Directory Index for Ext2, Daniel Phillips, https://www.kernel.org/doc/ols/2002/ols2002-pages-425-438.pdf} of all files in a folder
   - It is (most often) loaded in to memory
   - Used to speed up look up operations
     - \texttt{ls}, \texttt{stat}, etc.
@@ -231,8 +231,23 @@ and say files that share the first 4 characters belongs to the same /minor group
    :BEAMER_col: .5
    :END:
 
-   - Make structure picture
-
+#+latex: \renewcommand*\DTstyle{\scriptsize\normalfont\ttfamily\textbf}
+#+latex: \renewcommand*\DTstylecomment{\scriptsize\rmfamily\normalfont\color{MidnightBlue}$\triangleright$~\textit}
+#+latex: %\DTsetlength{0.2em}{1em}{0.2em}{0.4pt}{1.6pt}
+#+latex: \setlength{\DTbaselineskip}{8pt}
+#+latex: \DTsetlength{0.2em}{1em}{0.2em}{0.4pt}{2.5pt}
+#+latex:
+#+latex: \begin{minipage}[c]{1\columnwidth}
+#+latex: \dirtree {%
+#+latex:  .1 .registry/.
+#+latex:  .2 00/.
+#+latex:  .3 00/\DTcomment{Contains all $b$ where $h^b$ starts with \DTstyle{0000}}.
+#+latex:  .3 11/\DTcomment{Contains all $b$ where $h^b$ starts with \DTstyle{0011}}.
+#+latex:  .3 $\hdots$.
+#+latex:  .3 FF/\DTcomment{Contains all $b$ where $h^b$ starts with \DTstyle{00FF}}.
+#+latex: }
+#+latex: \end{minipage}%   
+   
 * Hackaround
 
   What this does is:
