@@ -13,7 +13,7 @@
 * 
 
   #+BEGIN_CENTER
-#+latex: {\huge Researchers are often guilty of only celebratint the final success}
+#+latex: {\huge Researchers are often guilty of only celebrating the final success}
   #+END_CENTER
 
   #+BEGIN_CENTER
@@ -34,7 +34,7 @@
   #+END_CENTER
 
   #+BEGIN_CENTER
-#+latex: {\huge But all analytics tools told us that we had amble space left}
+#+latex: {\huge But all analytics tools told us that we had ample space left}
   #+END_CENTER  
 
   #+BEGIN_CENTER
@@ -49,7 +49,7 @@
    :BEAMER_col: .5
    :END:
 - Our code
-- Some thing out side our code
+- Something outside our code
 
 ** Right                                                              :BMCOL:
    :PROPERTIES:
@@ -63,7 +63,7 @@
    :BEAMER_col: .5
    :END:
 - Our code
-- Some thing out side our code 
+- Something outside our code 
    
 
 ** Right                                                              :BMCOL:
@@ -71,8 +71,8 @@
    :BEAMER_col: .5
    :END:
 - Our code
-  - Full code analysis revealed, exactly nothing
-  - Follow systems calls, revealed... well nothing
+  - Full code analysis revealed exactly nothing
+  - Follow systems calls, revealed... well, nothing
 
 * Research Vectors
 
@@ -81,7 +81,7 @@
    :BEAMER_col: .5
    :END:
 - Our code
-- Some thing out side our code 
+- Something outside our code 
    
 
 ** Right                                                              :BMCOL:
@@ -165,7 +165,7 @@
   - Disable the directory index 
     - That is an option
     - It solves the issue
-    - But it heavily damage performance
+    - But it heavily damages performance
 
 * Solutions
 
@@ -177,7 +177,7 @@
   - Disable the directory index 
     - That is an option
     - It solves the issue
-    - But it heavily damage performance
+    - But it heavily damages performance
 
 ** Right                                                              :BMCOL:
    :PROPERTIES:
@@ -185,32 +185,32 @@
    :END:
 
    - So let us hack away around
-   - We will turn the disadvantage of directory index into an advantage
-   - It is only a "solution"
+   - We will turn the disadvantage of the directory index into an advantage
+   - It is only a "solution".
 
 * Hackaround
 
-  - Our file all have a SHA-1 identifier
+  - Our files all have an SHA-1 identifier
     - 20 bytes or converted to hexadecimal string 40 bytes
 
-  Let us use that to create a grouping system 
+  Let us use that to create a grouping system. 
 
 * Hackaround
 
-  - Our file all have a SHA-1 identifier
+  - Our files all have an SHA-1 identifier
     - 20 bytes or converted to hexadecimal string 40 bytes
 
 #+latex: \resizebox{\linewidth}{!}{\input{graphics/hash}}
       
-  Let us use that to create a grouping system 
+  Let us use that to create a grouping system. 
 
 #+latex: \resizebox{\linewidth}{!}{\input{graphics/hash_group_1}}  
 
-If hash for files shares the 2 first characters they belong to the same /major group/
+If hash for files shares the 2 first characters, they belong to the same /major group/
 
 #+latex: \resizebox{\linewidth}{!}{\input{graphics/hash_group_2}}
 
-and say files that shares the first 4 characters belongs to the same /minor group/
+and say files that share the first 4 characters belongs to the same /minor group/
 
   
 * Hackaround
@@ -222,9 +222,9 @@ and say files that shares the first 4 characters belongs to the same /minor grou
    :BEAMER_col: .5
    :END:
 
-  - Then we create a folder for each major group
-  - In the major group we create folders for all minor groups
-  - Then we place all files belong to that specific minor group in folder
+  - Then, we create a folder for each major group
+  - In the major group, we create folders for all minor groups
+  - Then, we place all files belong to that specific minor group in a folder
 
 ** Right                                                              :BMCOL:
    :PROPERTIES:
@@ -240,4 +240,17 @@ and say files that shares the first 4 characters belongs to the same /minor grou
     - all though still present
   - But we retain the power of the directory index
   - With minimum damage to storage usage
-    4kB (minimum per folder) 
+    -4kB (minimum per folder)
+  - Zero impact on RAM usage
+  - Work also for EXT2, EXT3, and ZFS
+
+* A Hackaround there actually would work but cost ram  
+
+  - Keep a registry in memory of all files stored
+  - But it increases the RAM consumption of the file system
+    - and do you really want your file system to play Google Chrome?
+
+
+* 
+
+#+latex: \section{Thank you for your attention}
